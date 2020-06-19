@@ -49,22 +49,38 @@ while(True):
 all_sneaker.sort( key=lambda x : x['discount'],reverse=True)
 print('found ',len(all_sneaker),' articles ')
 
-file_name = 'sneakers_'+str(datetime.datetime.now())+'.text'
+file_name = 'sneakers_'+str(datetime.datetime.now())+'.txt'
 
 
-
+#get script options
 n=10
-
+gender = 'both'
+brand = 'all'
 try:
-    opts,args = getopt.getopt(sys.argv[1:],"n:")
+    opts,args = getopt.getopt(sys.argv[1:],"n:f:b:")
 except getopt.GetoptError:
-    print('sneaker.py -n <int:number of sneaker>')
+    print('sneaker.py -n <int:number of sneaker> -f <string: m for men or w for women> -b <string:brand like adidas,reebok..>')
 for opt,arg in opts:
     if opt == '-n':
         n = int(arg) 
+    if opt == '-f':
+        gender = arg
+    if opt == '-b':
+        brand = arg
+#filter by gneder
+if gender != 'both':
+    if gender == 'm':
+        all_sneaker = list(filter(lambda item: not 'Femme' in item['name'].split(' '),all_sneaker))
 
+    elif gender == 'w':
+        all_sneaker = list(filter(lambda item: not 'Homme' in item['name'].split(' '),all_sneaker))
+#clear Pepe jeans sneakers
+all_sneaker = list(filter(lambda item: not 'Pepe Jeans' in item['name'],all_sneaker))
+#filter by brand
 
-
+if brand != 'all':
+    all_sneaker = list(filter(lambda item: brand.lower() in item['name'].lower(),all_sneaker))
+    
 for i in range (0,n):
     f = open(file_name,'a')
     f.write(all_sneaker[i]['name']+', '+all_sneaker[i]['price']+', '+str(all_sneaker[i]['discount'])+'%, '+all_sneaker[i]['link']+'\n')
